@@ -4,7 +4,7 @@ from tkinter.filedialog import askopenfile
 
 root = tk.Tk()
 # Specifying the size of the window
-app = tk.Canvas(root, width=600, height=300)
+app = tk.Canvas(root.maxsize(width=600, height=900))
 app.grid(columnspan=3, rowspan=1)
 
 # label
@@ -16,7 +16,11 @@ label1.grid(columnspan=3, column=0, row=1)
 def uploading():
     text.set("Loading...")
     file = askopenfile(parent=root, mode='rb', title="Choose a file", filetypes=[("PDF file", "*.pdf")])
-    text.set("Scanning..")
+
+    if file:
+        text.set("Scanning..")
+    else:
+        text.set("Loading...")
 
 
 # files uploading option
