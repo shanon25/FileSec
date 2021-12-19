@@ -1,36 +1,39 @@
-import tkinter as tk
+from tkinter import *
 from PyPDF2 import *
 from tkinter.filedialog import askopenfile
 
-root = tk.Tk()
-# Specifying the size of the window
-app = tk.Canvas(root.maxsize(width=600, height=900))
-app.grid(columnspan=3, rowspan=1)
+root = Tk()
+
+# Window size
+app = root.maxsize(600, 900)
+app = root.minsize(600, 900)
 
 # label
-label1 = tk.Label(root, text="Scan an Existing PDF file for malware below", font="Raleway")
-label1.grid(columnspan=3, column=0, row=1)
+label1 = Label(root, text="Upload a PDF or Word document to scan for Malware", font="Raleway")
+label1.place(x=118, y=270)
 
 
-# uploading files
-def uploading():
-    text.set("Loading...")
-    file = askopenfile(parent=root, mode='rb', title="Choose a file", filetypes=[("PDF file", "*.pdf")])
+# uploading function
+def Uploading():
+    text.set("Uploading...")
+    file = askopenfile(parent=root, mode='rb', title="Choose file", filetypes=[("PDF file", "*.pdf")])
 
     if file:
-        text.set("Scanning..")
+        text.set("Click to Scan")
+        text.set("Scanning...")
+
     else:
-        text.set("Loading...")
+        text.set("No files were selected!")
+        button2 = Button(root, textvariable=text, command=lambda: Uploading(), font="Raleway", width=18,
+                         height=2, bg="light blue")
+        button2.place(x=220, y=310)
 
 
-# files uploading option
-text = tk.StringVar()
-button = tk.Button(root, textvariable=text, command=lambda: uploading(), font="Raleway", bg="light blue", height=2,
-                   width=10)
+# button
+text = StringVar()
+button1 = Button(root, textvariable=text, text="Upload", command=lambda: Uploading(), font="Raleway", width=10,
+                 height=2, bg="light blue")
+button1.place(x=260, y=310)
 text.set("Upload")
-button.grid(column=1, row=2)
-
-app = tk.Canvas(root, width=600, height=250)
-app.grid(columnspan=3)
 
 root.mainloop()
