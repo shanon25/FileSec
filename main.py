@@ -1,5 +1,4 @@
 from tkinter import *
-import vt
 from PyPDF2 import *
 from tkinter.filedialog import askopenfile
 from tkinter import messagebox
@@ -29,15 +28,12 @@ def Uploading():
         file = askopenfile(parent=root, mode='rb', title="Choose file",
                        filetypes=[("Word Document", "*.docx"), ("PDF file", "*.pdf")])
 
-img_btn = PhotoImage(file='icon/smart-custom-file-input-2.jpg')
 
-img_lable = Label(image=upload_btn)
-img_lable.pack(paddy=20)
 
 # button
 text = StringVar()
 button1 = Button(root, textvariable=text, text="Upload", command=lambda: Uploading(), font="Raleway", width=10,
-                 height=2, bg="light blue", image=img_btn)
+                 height=2, bg="light blue")
 button1.place(x=260, y=310)
 text.set("Upload")
 
