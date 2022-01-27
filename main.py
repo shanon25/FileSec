@@ -2,7 +2,7 @@ from tkinter import *
 from PyPDF2 import *
 from tkinter.filedialog import askopenfile
 from tkinter import messagebox
-
+from backend import execute
 root = Tk()
 
 # Window size
@@ -75,5 +75,7 @@ help_menu = Menu(menu)
 menu.add_cascade(label="Info", menu=help_menu)
 help_menu.add_command(label="Help")
 help_menu.add_command(label="About FileSec")
+
+print(__name__)
 
 root.mainloop()
