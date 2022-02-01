@@ -34,7 +34,7 @@ def execute():
 
         if results is not None:
             print("result found", results)
-            return result
+            return results
             break
 
         time.sleep(20)

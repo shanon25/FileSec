@@ -3,11 +3,14 @@ from PyPDF2 import *
 from tkinter.filedialog import askopenfile
 from tkinter import messagebox
 from backend import execute
+import os
+import asyncio
+
 root = Tk()
 
 # Window size
-app = root.maxsize(600, 900)
-app = root.minsize(600, 900)
+app = root.maxsize(600, 750)
+app = root.minsize(600, 750)
 
 
 # label
@@ -23,12 +26,10 @@ def Uploading():
         text.set("Click to Scan")
 
     else:
-        text.set("Click to Scan")
+        text.set("Upload")
         messagebox.showerror("Error", "Please select a file!!!")
         file = askopenfile(parent=root, mode='rb', title="Choose file",
                        filetypes=[("Word Document", "*.docx"), ("PDF file", "*.pdf")])
-
-
 
 # button
 text = StringVar()
@@ -56,6 +57,22 @@ def quit():
     else :
         command = root
 
+#USB plugin message box
+def usb():
+   res = messagebox.askyesno("USB Detected!!", "USB is detected please click YES to scan all the PDFs and Word Documents in the device")
+   if res == 1:
+       pop = Toplevel()
+       pop.maxsize(600, 700)
+       pop.minsize(700, 500)
+   else:
+       error()
+
+#error message box
+def error():
+    er = messagebox.askyesno("Are you sure?", "Do you want to terminate this process?")
+    if er != 1:
+       usb()
+
 #menu items
 scan_menu = Menu(menu)
 menu.add_cascade(label="Scans", menu=scan_menu)
@@ -76,6 +93,6 @@ menu.add_cascade(label="Info", menu=help_menu)
 help_menu.add_command(label="Help")
 help_menu.add_command(label="About FileSec")
 
-print(__name__)
+usb()
 
 root.mainloop()
