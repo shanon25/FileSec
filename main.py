@@ -57,13 +57,24 @@ def quit():
     else :
         command = root
 
+
+#USB scanning function
+def scan():
+    pop = Toplevel()
+    pop.title("USB scanner")
+    pop.maxsize(600, 700)
+    pop.minsize(700, 500)
+    btn_scn = Button(pop, textvariable=text, text="Scan", font="Raleway", width=10, height=2, bg="light blue")
+    btn_scn.place(x=300, y=130)
+    text.set("Scan")
+
+
 #USB plugin message box
 def usb():
+   text = StringVar()
    res = messagebox.askyesno("USB Detected!!", "USB is detected please click YES to scan all the PDFs and Word Documents in the device")
    if res == 1:
-       pop = Toplevel()
-       pop.maxsize(600, 700)
-       pop.minsize(700, 500)
+       scan()
    else:
        error()
 
