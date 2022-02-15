@@ -30,7 +30,7 @@ def execute():
     uploaded_data = upload()
     for each in range(0, 10):
         results = get_results(uploaded_data)
-        print('pending')
+        print('pending....')
 
         if results is not None:
             print("result found", results)
