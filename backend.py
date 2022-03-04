@@ -1,15 +1,15 @@
 import time
-
 import requests
 
 url = 'https://www.virustotal.com/vtapi/v2/'
 api = 'c0cdfc9faae9ba0e5929d03b9f14e5707f87719f4ea7c68f046e1005060c2209'
 
 
-def upload():
+def upload(file):
+    print(file, type(file))
     params = {'apikey': api}
     u = url + "file/scan"
-    file = {'file': open('Shanon fernando - CCEH final assignment.pdf', 'rb')}
+    file = {'file': open(file, 'rb')}
     response = requests.post(u, files=file, params=params)
     return response.json()
 
@@ -26,14 +26,13 @@ def get_results(data):
             return results
 
 
-def execute():
-    uploaded_data = upload()
-    for each in range(0, 10):
+def execute(file):
+    uploaded_data = upload(file)
+    for each in range(0, 15):
         results = get_results(uploaded_data)
         print('pending....')
 
         if results is not None:
-            print("result found", results)
             return results
             break
 

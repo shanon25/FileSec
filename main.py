@@ -1,11 +1,13 @@
 from tkinter import *
+import requests
 from PyPDF2 import *
-from tkinter.filedialog import askopenfile
+from tkinter import filedialog
 from tkinter import messagebox
 import string
 import time
+import backend
+from backend import *
 from ctypes import windll
-from backend import execute
 import os
 import asyncio
 
@@ -23,27 +25,49 @@ label1.place(x=118, y=270)
 # uploading function
 def Uploading():
     text.set("Uploading...")
-    file = askopenfile(parent=root, mode='rb', title="Choose file",
+    file = filedialog.askopenfilename(initialdir="/", title="Choose file",
                        filetypes=[("Word Document", "*.docx"), ("PDF file", "*.pdf")])
+    # filename label
+    file_lbl = Label(root, fg="black", bg="light blue")
+    file_lbl.grid(row=3, column=1)
+    file_lbl.configure(text="File: "+file)
+
 
     if file:
+        #button 2 for send the selected file to Virus total
         text.set("Click to Scan")
+        button2 = Button(root, textvariable=text, text="Upload", command=lambda: showresult(file), font="Raleway", width=10, height=2,
+                         bg="light blue")
+        button2.place(x=260, y=310)
 
     else:
         text.set("Upload")
         messagebox.showerror("Error", "Please select a file!!!")
         file = askopenfile(parent=root, mode='rb', title="Choose file", filetypes=[("Word Document", "*.docx"), ("PDF file", "*.pdf")])
 
+def showresult(file):
+    result = backend.execute(file)
+    show_results_in_ui(result)
 
-# button
+
+# button 1 for uploading a file
 text = StringVar()
-button1 = Button(root, textvariable=text, text="Upload", command=lambda: Uploading(), font="Raleway", width=10, height=2, bg="light blue")
+button1 = Button(root, textvariable=text, text="Upload", command=Uploading, font="Raleway", width=10, height=2, bg="light blue")
 button1.place(x=260, y=310)
 text.set("Upload")
 
-
-#textbox
-
+def show_results_in_ui(data):
+    sc = Toplevel()
+    sc_verbose_lbl = Label(root, text=f"Message: {data.get('verbose_msg')}", font="Raleway", bg="light blue")
+    sc_total_lbl = Label(root, text=f"Total: {data.get('total')}", font="Raleway", bg="light blue")
+    sc_pos_lbl = Label(root, text=f"Positives: {data.get('positives')}", font="Raleway", bg="light blue")
+    sc_date_lbl = Label(root, text=f"Scan date: {data.get('scan_date')}", font="Raleway", bg="light blue")
+    sc_verbose_lbl.place(x=100, y=500)
+    sc_total_lbl.place(x=150, y=550)
+    sc_pos_lbl.place(x=200, y=600)
+    sc_date_lbl.place(x=250, y=650)
+    sc.maxsize(600, 700)
+    sc.minsize(700, 500)
 
 # Advanced scanning window
 def adv_scan():
@@ -126,6 +150,6 @@ menu.add_cascade(label="Info", menu=help_menu)
 help_menu.add_command(label="Help")
 help_menu.add_command(label="About FileSec")
 
-usb()
+#usb()
 
 root.mainloop()
