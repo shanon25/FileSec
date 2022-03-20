@@ -6,7 +6,6 @@ api = 'c0cdfc9faae9ba0e5929d03b9f14e5707f87719f4ea7c68f046e1005060c2209'
 
 
 def upload(file):
-    print(file, type(file))
     params = {'apikey': api}
     u = url + "file/scan"
     file = {'file': open(file, 'rb')}
@@ -35,8 +34,7 @@ def execute(file):
         if results is not None:
             return results
             break
-
-        time.sleep(20)
+        time.sleep(10)
 
 
 if __name__ == "__main__":

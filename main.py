@@ -1,6 +1,6 @@
+import tkinter
 from tkinter import *
 import requests
-from PyPDF2 import *
 from tkinter import filedialog
 from tkinter import messagebox
 import string
@@ -19,7 +19,7 @@ app = root.minsize(600, 750)
 
 # label
 label1 = Label(root, text="Upload a PDF or Word document to scan for Malware", font="Raleway")
-label1.place(x=118, y=270)
+label1.place(x=118, y=150)
 
 
 # uploading function
@@ -28,17 +28,17 @@ def Uploading():
     file = filedialog.askopenfilename(initialdir="/", title="Choose file",
                        filetypes=[("Word Document", "*.docx"), ("PDF file", "*.pdf")])
     # filename label
-    file_lbl = Label(root, fg="black", bg="light blue")
-    file_lbl.grid(row=3, column=1)
+    file_lbl = Label(root, fg="black")
+    file_lbl.place(x=90, y=280)
     file_lbl.configure(text="File: "+file)
 
 
     if file:
         #button 2 for send the selected file to Virus total
         text.set("Click to Scan")
-        button2 = Button(root, textvariable=text, text="Upload", command=lambda: showresult(file), font="Raleway", width=10, height=2,
+        button2 = Button(root, textvariable=text, text="Upload", command=lambda : showresult(file), font="Raleway", width=10, height=2,
                          bg="light blue")
-        button2.place(x=260, y=310)
+        button2.place(x=260, y=200)
 
     else:
         text.set("Upload")
@@ -53,21 +53,25 @@ def showresult(file):
 # button 1 for uploading a file
 text = StringVar()
 button1 = Button(root, textvariable=text, text="Upload", command=Uploading, font="Raleway", width=10, height=2, bg="light blue")
-button1.place(x=260, y=310)
+button1.place(x=260, y=200)
 text.set("Upload")
 
 def show_results_in_ui(data):
-    sc = Toplevel()
-    sc_verbose_lbl = Label(root, text=f"Message: {data.get('verbose_msg')}", font="Raleway", bg="light blue")
-    sc_total_lbl = Label(root, text=f"Total: {data.get('total')}", font="Raleway", bg="light blue")
-    sc_pos_lbl = Label(root, text=f"Positives: {data.get('positives')}", font="Raleway", bg="light blue")
-    sc_date_lbl = Label(root, text=f"Scan date: {data.get('scan_date')}", font="Raleway", bg="light blue")
-    sc_verbose_lbl.place(x=100, y=500)
-    sc_total_lbl.place(x=150, y=550)
-    sc_pos_lbl.place(x=200, y=600)
-    sc_date_lbl.place(x=250, y=650)
-    sc.maxsize(600, 700)
-    sc.minsize(700, 500)
+    sc_verbose_lbl = Label(root, text=f"Message: {data.get('verbose_msg')}", font="Raleway", bg="light green", fg="black")
+    sc_total_lbl = Label(root, text=f"Total: {data.get('total')}", font="Raleway", bg="light green", fg="black")
+    sc_pos_lbl = Label(root, text=f"Positives: {data.get('positives')}", font="Raleway", bg="light green", fg="black")
+    sc_date_lbl = Label(root, text=f"Scan date: {data.get('scan_date')}", font="Raleway", bg="light green", fg="black")
+    sc_verbose_lbl.place(x=90, y=350)
+    sc_total_lbl.place(x=90, y=400)
+    sc_pos_lbl.place(x=90, y=450)
+    sc_date_lbl.place(x=90, y=500)
+
+    if data.get('positives'):
+        sc_mal_lbl = Label(root, text="MALWARE DETECTED!!!", bg="brown", fg="white")
+        sc_mal_lbl.place(x=140, y=550)
+    else:
+        sc_mal_lbl = Label(root, text="NO MALWARE IS DETECTED, FILE IS SAFE", bg="light green", fg="black", font="Raleway")
+        sc_mal_lbl.place(x=140, y=550)
 
 # Advanced scanning window
 def adv_scan():
@@ -75,7 +79,6 @@ def adv_scan():
     adv.maxsize(600, 900)
     adv.minsize(600, 900)
     adv.title("Advanced Scan")
-
 
 # Menu
 menu = Menu(root)
@@ -92,14 +95,20 @@ def quit_form():
 
 
 # USB scanning function
+text2 = StringVar()
+text3 = StringVar()
 def scan():
     pop = Toplevel()
     pop.title("USB scanner")
-    pop.maxsize(600, 700)
+    pop.maxsize(700, 500)
     pop.minsize(700, 500)
-    btn_scn = Button(pop, textvariable=text, text="Scan", font="Raleway", width=10, height=2, bg="light blue")
-    btn_scn.place(x=300, y=130)
-    text.set("Scan")
+    file_txt = Listbox(pop, width=90, height=20)
+    file_txt.place(x=80, y=160)
+    btn_scn = Button(pop, textvariable=text2, text="List the files", command=lambda : Filetype(pop), font="Raleway", width=10, height=2, bg="brown", fg="white")
+    btn_scn.place(x=300, y=50)
+    text2.set("Scan the files")
+    btn1_scn = Button(pop, textvariable=text3, text="Scan", font="Raleway", width=10, height=2, bg="brown", fg="white")
+    text3.set("Scan")
 
 
 # Usb status
@@ -113,6 +122,35 @@ def status():
     return devices
 
 
+#Listing down PDF and word files in an external drive
+def Filetype(pop):
+    #device = status()
+    file_txt = Listbox(pop, width=90, height=20)
+    file_txt.place(x=80, y=160)
+    filenames = {}
+    dirname = "F:\\files\\"
+    ext = ('.pdf', '.docx')
+    for root, dirs, files in os.walk(dirname):
+        for index, file in enumerate(files):
+            if file.endswith(ext):
+                filenames[file] = f"{root}{file}"
+                file_txt.insert(index, file)
+
+    counter = 0
+    for fname, fpath in filenames.items():
+        result = backend.execute(fpath)
+        positive_msg = "Couldn't verified"
+
+        if result:
+            if result.get('positives'):
+                positive_msg = "MALWARE DETECTED!!!"
+            else:
+                positive_msg = "NO MALWARE IS DETECTED, FILE IS SAFE"
+
+        label_text = f"{fname} - {positive_msg}"
+        file_txt.delete(counter)
+        file_txt.insert(counter, label_text)
+        counter += 1
 # USB plugin message box
 def usb():
     txt = StringVar()
@@ -150,6 +188,6 @@ menu.add_cascade(label="Info", menu=help_menu)
 help_menu.add_command(label="Help")
 help_menu.add_command(label="About FileSec")
 
-#usb()
+usb()
 
 root.mainloop()
