@@ -1,4 +1,5 @@
 import tkinter
+
 from tkinter import *
 import requests
 from tkinter import filedialog
@@ -121,14 +122,30 @@ def status():
         record_deviceBit >>= 1
     return devices
 
+def detect_device():
+    original = set(status())
+    print('Detecting...')
+    time.sleep(3)
+    add_device = set(status()) - original
+    subt_device = original - set(status())
+
+    if len(add_device):
+        print("There were %d" % (len(add_device)))
+        for drive in add_device:
+            print("The drives added: %s." % drive)
+
+    elif len(subt_device):
+        print("There were %d" % (len(subt_device)))
+        for drive in subt_device:
+            print("The drives remove: %s." % drive)
 
 #Listing down PDF and word files in an external drive
 def Filetype(pop):
-    #device = status()
+    device = detect_device()
     file_txt = Listbox(pop, width=90, height=20)
     file_txt.place(x=80, y=160)
     filenames = {}
-    dirname = "F:\\files\\"
+    dirname = os.chdir(device)
     ext = ('.pdf', '.docx')
     for root, dirs, files in os.walk(dirname):
         for index, file in enumerate(files):
@@ -151,8 +168,10 @@ def Filetype(pop):
         file_txt.delete(counter)
         file_txt.insert(counter, label_text)
         counter += 1
+
 # USB plugin message box
 def usb():
+    device = status()
     txt = StringVar()
     res = messagebox.askyesno("USB Detected!!", "USB is detected please click YES to scan all the PDFs and Word Documents in the device")
     if res == 1:
