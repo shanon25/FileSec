@@ -137,26 +137,6 @@ def status():
     return devices
 
 
-# def detect_device():
-#     original = set(status())
-#     print('Detecting...')
-#     time.sleep(3)
-#     add_device = set(status()) - original
-#     subt_device = original - set(status())
-#
-#     if len(add_device):
-#         print("There were %d" % (len(add_device)))
-#         for drive in add_device:
-#             print("The drives added: %s." % drive)
-#
-#     elif len(subt_device):
-#         print("There were %d" % (len(subt_device)))
-#         for drive in subt_device:
-#             print("The drives remove: %s." % drive)
-
-#dirname = "D:\\Files\\"
-
-
 def detect_device():
     global dirname
     while True:
