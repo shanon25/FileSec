@@ -181,6 +181,7 @@ def Filetype(pop):
         if result:
             if result.get('positives'):
                 positive_msg = "MALWARE DETECTED!!!"
+
             else:
                 positive_msg = "NO MALWARE IS DETECTED, FILE IS SAFE"
 
