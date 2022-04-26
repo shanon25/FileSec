@@ -1,3 +1,6 @@
+from pathlib import Path
+import glob, os
+import os
 from tkinter import *
 from tkinter import filedialog
 from tkinter import messagebox
@@ -9,7 +12,8 @@ import backend
 from backend import *
 from ctypes import windll
 import os
-import asyncio
+import img2pdf
+from pdf2image import convert_from_path
 
 root = Tk()
 
@@ -25,6 +29,7 @@ label1.place(x=100, y=150)
 # uploading function
 def Uploading():
     text.set("Uploading...")
+    global file
     file = filedialog.askopenfilename(initialdir="/", title="Choose file",
                                       filetypes=[("Word Document", "*.docx"), ("PDF file", "*.pdf")])
     # filename label
@@ -47,8 +52,8 @@ def Uploading():
                            filetypes=[("Word Document", "*.docx"), ("PDF file", "*.pdf")])
 
 
-def showresult(file):
-    result = backend.execute(file)
+def showresult(files):
+    result = backend.execute(files)
     show_results_in_ui(result)
 
 
@@ -58,6 +63,24 @@ button1 = Button(root, textvariable=text, text="Upload", command=Uploading, font
                  bg="light blue")
 button1.place(x=260, y=200)
 text.set("Upload")
+
+
+def img():
+    images = convert_from_path(file, 500)
+
+    for i in range(len(images)):
+        # Save pages as images in the pdf
+        images[i].save(file + str(i) + '.jpg', 'JPEG')
+
+
+def pdf():
+    p = Path(file)
+    image_location = str(p.parent)
+    with open(file, "wb") as y:
+        y.write(img2pdf.convert(
+            [os.path.join(image_location, x) for x in os.listdir(image_location) if x.endswith(".jpg")]))
+    for delete_image in glob.glob(os.path.join(image_location, '*.jpg')):
+        os.remove(delete_image)
 
 
 def show_results_in_ui(data):
@@ -76,10 +99,14 @@ def show_results_in_ui(data):
     if data.get('positives'):
         sc_mal_lbl = Label(root, text="MALWARE DETECTED!!!", bg="brown", fg="white")
         sc_mal_lbl.place(x=140, y=550)
+        img()
+        pdf()
     else:
         sc_mal_lbl = Label(root, text="NO MALWARE IS DETECTED, FILE IS SAFE", bg="light green", fg="black",
                            font="Raleway")
         sc_mal_lbl.place(x=140, y=550)
+        img()
+        pdf()
 
 
 # Advanced scanning window
@@ -181,7 +208,9 @@ def Filetype(pop):
         if result:
             if result.get('positives'):
                 positive_msg = "MALWARE DETECTED!!!"
-
+                print(file)
+                pdf2img(file)
+                pdf(file)
             else:
                 positive_msg = "NO MALWARE IS DETECTED, FILE IS SAFE"
 
