@@ -8,6 +8,8 @@ import string
 import threading
 import time
 from tkinter.filedialog import askopenfile
+from tkinter.ttk import Progressbar
+
 import backend
 from backend import *
 from ctypes import windll
@@ -26,14 +28,33 @@ label1 = Label(root, text="Upload a PDF or Word document to scan for Malware", f
 label1.place(x=100, y=150)
 
 
+def progress():
+    pb1 = Progressbar(root, orient=HORIZONTAL, length=300, mode='determinate')
+    pb1.place(x=150, y=280)
+
+    for i in range(1, 101, 1):
+        pb1['value'] = i
+        root.update_idletasks()
+        lbl.config(text=str(i) + "%")
+        time.sleep(0.09)
+        pb1['value'] = 100
+    pb1.destroy()
+
+
+lbl = Label(root, font="arial 15 bold")
+lbl.place(x=290, y=320)
+
+
 # uploading function
 def Uploading():
     text.set("Uploading...")
     global file
     file = filedialog.askopenfilename(initialdir="/", title="Choose file",
-                                      filetypes=[("Word Document", "*.docx"), ("PDF file", "*.pdf")])
+                                      filetypes=[("PDF file", "*.pdf"), ("Word Document", "*.docx")])
+    progress()
+
     # filename label
-    file_lbl = Label(root, fg="black")
+    file_lbl = Label(root, foreground='Black')
     file_lbl.place(x=90, y=280)
     file_lbl.configure(text="File: " + file)
 
@@ -49,7 +70,7 @@ def Uploading():
         text.set("Upload")
         messagebox.showerror("Error", "Please select a file!!!")
         file = askopenfile(parent=root, mode='rb', title="Choose file",
-                           filetypes=[("Word Document", "*.docx"), ("PDF file", "*.pdf")])
+                           filetypes=[("PDF file", "*.pdf"), ("Word Document", "*.docx")])
 
 
 def showresult(files):
