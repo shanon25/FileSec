@@ -27,9 +27,11 @@ app = root.minsize(600, 750)
 label1 = Label(root, text="Upload a PDF or Word document to scan for Malware", font="Raleway")
 label1.place(x=100, y=150)
 
+# progressbar
+pb1 = Progressbar(root, orient=HORIZONTAL, length=300, mode='determinate')
+
 
 def progress():
-    pb1 = Progressbar(root, orient=HORIZONTAL, length=300, mode='determinate')
     pb1.place(x=150, y=280)
 
     for i in range(1, 101, 1):
@@ -39,6 +41,7 @@ def progress():
         time.sleep(0.09)
         pb1['value'] = 100
     pb1.destroy()
+    lbl.config(text="")
 
 
 lbl = Label(root, font="arial 15 bold")
@@ -55,15 +58,14 @@ def Uploading():
 
     # filename label
     file_lbl = Label(root, foreground='Black')
-    file_lbl.place(x=90, y=280)
+    file_lbl.place(x=170, y=300)
     file_lbl.configure(text="File: " + file)
 
     if file:
         # button 2 for send the selected file to Virus total
         text.set("Click to Scan")
         button2 = Button(root, textvariable=text, text="Upload", command=lambda: showresult(file), font="Raleway",
-                         width=10, height=2,
-                         bg="light blue")
+                         width=10, height=2, bg="light blue")
         button2.place(x=260, y=200)
 
     else:
@@ -88,7 +90,6 @@ text.set("Upload")
 
 def img():
     images = convert_from_path(file, 500)
-
     for i in range(len(images)):
         # Save pages as images in the pdf
         images[i].save(file + str(i) + '.jpg', 'JPEG')
@@ -126,8 +127,6 @@ def show_results_in_ui(data):
         sc_mal_lbl = Label(root, text="NO MALWARE IS DETECTED, FILE IS SAFE", bg="light green", fg="black",
                            font="Raleway")
         sc_mal_lbl.place(x=140, y=550)
-        img()
-        pdf()
 
 
 # Advanced scanning window
@@ -215,7 +214,7 @@ def Filetype(pop):
     file_txt.place(x=80, y=160)
     file_txt.delete(0, END)
     filenames = {}
-    ext = ('.pdf', '.docx')
+    ext = '.pdf'
     for root, dirs, files in os.walk(dirname):
         for index, file in enumerate(files):
             if file.endswith(ext):
@@ -230,8 +229,8 @@ def Filetype(pop):
             if result.get('positives'):
                 positive_msg = "MALWARE DETECTED!!!"
                 print(file)
-                pdf2img(file)
-                pdf(file)
+                img()
+                pdf()
             else:
                 positive_msg = "NO MALWARE IS DETECTED, FILE IS SAFE"
 
