@@ -2,12 +2,18 @@
 	"manifest_version": 3,
 	"name":"FileSec",
 	"version":"1.0.0",
-	"description": "PDF file security system and sanitizer",
-    "permissions": ["downloads", "downloads.open", "downloads.shelf", "storage"],
+	"description": "PDF and word file security system and sanitizer",
+	"host_permissions": ["<all_urls>"],
+    "permissions": [
+		"downloads",
+		"downloads.open", 
+		"downloads.shelf", 
+		"storage"
+	],
 	"action":{
 		"default_popup":"index.html"
 	},
 	"background": {
-		"service_worker": "background.js"
+		"service_worker": "/backend.js"
 	  }
 }
