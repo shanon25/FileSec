@@ -1,5 +1,6 @@
 from pathlib import Path
 import glob, os
+import json
 import os
 from tkinter import *
 from tkinter import filedialog
@@ -50,15 +51,17 @@ lbl.place(x=290, y=320)
 
 # uploading function
 def Uploading():
-    text.set("Uploading...")
     global file
+    text.set("Uploading...")
     file = filedialog.askopenfilename(initialdir="/", title="Choose file",
                                       filetypes=[("PDF file", "*.pdf"), ("Word Document", "*.docx")])
     progress()
+    print(type(file))
+    print(file)
 
     # filename label
     file_lbl = Label(root, foreground='Black')
-    file_lbl.place(x=170, y=300)
+    file_lbl.place(x=140, y=280)
     file_lbl.configure(text="File: " + file)
 
     if file:
@@ -88,14 +91,18 @@ button1.place(x=260, y=200)
 text.set("Upload")
 
 
-def img():
+def img(ffile=None):
+    if ffile:
+        file = ffile
     images = convert_from_path(file, 500)
     for i in range(len(images)):
         # Save pages as images in the pdf
         images[i].save(file + str(i) + '.jpg', 'JPEG')
 
 
-def pdf():
+def pdf(ffile=None):
+    if ffile:
+        file = ffile
     p = Path(file)
     image_location = str(p.parent)
     with open(file, "wb") as y:
@@ -119,10 +126,13 @@ def show_results_in_ui(data):
     sc_date_lbl.place(x=90, y=500)
 
     if data.get('positives'):
-        sc_mal_lbl = Label(root, text="MALWARE DETECTED!!!", bg="brown", fg="white")
-        sc_mal_lbl.place(x=140, y=550)
-        img()
-        pdf()
+        sc_mal_lbl = Label(root, text="MALWARE DETECTED!!!", bg="brown", fg="white", font="Raleway")
+        sc_mal_lbl.place(x=180, y=580)
+        img(file)
+        pdf(file)
+        san_lbl = Label(root, text="File sanitized Successfully", bg="light green", fg="black",
+                        font="Raleway")
+        san_lbl.place(x=180, y=620)
     else:
         sc_mal_lbl = Label(root, text="NO MALWARE IS DETECTED, FILE IS SAFE", bg="light green", fg="black",
                            font="Raleway")
@@ -209,7 +219,7 @@ def detect_device():
 # Listing down PDF and word files in an external drive
 def Filetype(pop):
     print(dirname)
-    # device = detect_device()
+
     file_txt = Listbox(pop, width=90, height=20)
     file_txt.place(x=80, y=160)
     file_txt.delete(0, END)
@@ -223,18 +233,25 @@ def Filetype(pop):
     counter = 0
     for fname, fpath in filenames.items():
         result = backend.execute(fpath)
+        json_data = json.dumps(result)
+        print(json_data)
+        print(fpath)
+        file = fpath
+        print(f"result - {result}")
         positive_msg = "Couldn't verified"
 
         if result:
             if result.get('positives'):
+                print(result.get('positives'))
                 positive_msg = "MALWARE DETECTED!!!"
                 print(file)
-                img()
-                pdf()
+                img(file)
+                pdf(file)
             else:
                 positive_msg = "NO MALWARE IS DETECTED, FILE IS SAFE"
 
         label_text = f"{fname} - {positive_msg}"
+        print(label_text)
         file_txt.delete(counter)
         file_txt.insert(counter, label_text)
         counter += 1
