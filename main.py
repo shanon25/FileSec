@@ -243,7 +243,7 @@ def Filetype(pop):
         if result:
             if result.get('positives'):
                 print(result.get('positives'))
-                positive_msg = "MALWARE DETECTED!!!"
+                positive_msg = "MALWARE DETECTED!!!, File is sanitized successfully"
                 print(file)
                 img(file)
                 pdf(file)
